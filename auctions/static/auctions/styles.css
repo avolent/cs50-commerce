@@ -1,0 +1,10 @@
+body {
+    padding: 10px;
+}
+#create {
+    margin-top: 5px;
+}
+
+form input, textarea {
+    width: 500px;
+}
