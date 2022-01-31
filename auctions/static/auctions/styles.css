@@ -8,3 +8,7 @@ body {
 form input, textarea {
     width: 500px;
 }
+
+.auction {
+    display: flex
+}
