@@ -76,7 +76,7 @@ def register(request):
 def create(request):
     if request.method == "POST":
         print(request.user.id)
-        a = Auction(title=request.POST["title"], description=request.POST["description"], starting_price=request.POST["price"], image=request.POST["image"], category=request.POST["category"].lower(), seller=request.user)
+        a = Auction(title=request.POST["title"], description=request.POST["description"], starting_price=request.POST["price"], image=request.POST["image"], category=request.POST["category"].lower().capitalize(), seller=request.user)
         a.save()
         return HttpResponseRedirect(reverse("index"))
     else:
@@ -86,4 +86,19 @@ def listing(request, listing):
     auction = Auction.objects.get(title=listing)
     return render(request, "auctions/listing.html", {
         "auction": auction,
+    })
+
+def categories(request):
+    auctions = Auction.objects.all()
+    categories = []
+    for auction in auctions:
+        if auction.category.capitalize() not in categories:
+            categories.append(auction.category.capitalize())
+    return render(request, "auctions/categories.html", {
+        "categories": categories,
+    })
+
+def category(request, category):
+    return render(request, "auctions/category.html", {
+        "category": category.capitalize(),
     })
