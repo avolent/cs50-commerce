@@ -4,19 +4,65 @@ body {
 #create {
     margin-top: 5px;
 }
-
-form input, textarea {
+#create_listing input, textarea {
     width: 500px;
 }
-
-.auction {
+.auction_listing {
     display: flex;
-    padding-bottom: 10px;
+    margin-bottom: 20px;
 }
-.auction_image {
+.auction_listing .listing_image {
     display: inherit;
-    width: 400px;
     margin-right: 25px;
     justify-content: center;
+    align-items: baseline;
+    min-width: 300px;
+}
+.auction_listing img {
+    max-width: 300px;
+    max-height: 300px;
+}
+.auction_listing .listing_price {
+    margin-bottom: 10px;
+}
+.auction_listing .listing_description {
+    margin-bottom: 10px;
+}
+.listing_date {
+    font-size: 12px;
+    font-family: Arial, Helvetica, sans-serif;
+    color: grey;
+}
+.auction_listing .no_image {
+    display: inherit;
+    margin: auto;
+    justify-content: center;
+}
+/* listing page */
+.auction {
+    display: flex;
+    flex-direction: column;
+}
+.auction .listing_image {
+    display: inherit;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+.auction img {
+    max-height: 400px;
+}
+.auction .no_image {
+    display: inherit;
+    height: 100px;
+    justify-content: center;
     align-items: center;
+}
+.auction .listing_price {
+    margin-bottom: 10px;
+}
+.auction .listing_category {
+    margin-bottom: 10px;
+}
+.auction .listing_description {
+    margin-bottom: 10px;
 }

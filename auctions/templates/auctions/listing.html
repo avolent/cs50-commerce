@@ -1,15 +1,49 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-    <h2>Listing for {{ auction.title }}</h2>
-    <div class="auction_image">{% if auction.image != "" %}<img src="{{ auction.image }}" alt="{{ auction.title }}" width="400" height="auto">{% else %}No Image{% endif %}</div>
-    <div class="auction_details">
-        <h5>{{ auction.title }}</h5>
-        Price: ${{ auction.starting_price }}
-        <p>{{ auction.description }}</p>
-        {% if auction.category != "" %}
-        Category: {{ auction.category }}
+    <h2>Listing: {{ auction.title }}</h2>
+    <div class="auction">
+        <div class="listing_image">
+            {% if auction.image != "" %}
+            <img src="{{ auction.image }}" alt="{{ auction.title }}">
+            {% else %}
+            <span class="no_image">No Image</span>
+            {% endif %}
+        </div>
+        {% if user.is_authenticated %}
+        <div class="listing_watchlist">
+        <button id="watchlist" type="submit" formaction="" >Watchlist</button>
+        </div>
         {% endif %}
-        <span>Created on {{ auction.created }}</span>
+        <div class="listing_details">
+            <div class="listing_price">
+                <b>Current Price:</b> ${{ auction.starting_price }}
+            </div>
+            <div class="listing_bid">
+                Total bids: (Your bid is the)
+                {% if user.is_authenticated %}
+                <form class="bid_form">
+                    <input id="starting_price" type="number" placeholder="{{ auction.starting_price }}" required name="price" min="{{ auction.starting_price }}" step="0.01" title="Currency">
+                    <button>Bid</button>
+                </form>
+                {% endif %}
+            </div>
+            <div class="listing_seller">
+                <b>Seller:</b> {{ auction.seller.username }}
+            </div>
+            <div class="listing_category">
+                {% if auction.category != "" %}
+                    <b>Category:</b> {{ auction.category }}
+                {% else %}
+                    <b>Category:</b> none
+                {% endif %}
+            </div>
+            <div class="listing_description">
+                {{ auction.description }}
+            </div>
+            <div class="listing_date">
+                <span>Created on {{ auction.created }}</span>
+            </div>
+        </div>
     </div>
 {% endblock %}
