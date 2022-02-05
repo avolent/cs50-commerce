@@ -1,0 +1,15 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <h2>Listing for {{ auction.title }}</h2>
+    <div class="auction_image">{% if auction.image != "" %}<img src="{{ auction.image }}" alt="{{ auction.title }}" width="400" height="auto">{% else %}No Image{% endif %}</div>
+    <div class="auction_details">
+        <h5>{{ auction.title }}</h5>
+        Price: ${{ auction.starting_price }}
+        <p>{{ auction.description }}</p>
+        {% if auction.category != "" %}
+        Category: {{ auction.category }}
+        {% endif %}
+        <span>Created on {{ auction.created }}</span>
+    </div>
+{% endblock %}

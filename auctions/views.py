@@ -1,15 +1,22 @@
+from optparse import TitledHelpFormatter
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
+from django import forms
 
 from .models import User, Auction
 
+class CreateListing(forms.Form):
+    title = forms.CharField(label="Title", max_length=64)
+    description = forms.CharField(label="Title",)
+    category = forms.CharField(label="Tategory", max_length=64 )
+    title = forms.CharField(label="Title")
+    url = forms.CharField(label="Image URL:")
 
 def index(request):
     auctions = Auction.objects.all()
-    print(auctions[0].title)
     return render(request, "auctions/index.html", {
         "auctions": auctions
     })
@@ -69,7 +76,14 @@ def register(request):
 def create(request):
     if request.method == "POST":
         print(request.user.id)
-        a = Auction(title=request.POST["title"], description=request.POST["description"], starting_price=request.POST["price"], image=request.POST["image"], category=request.POST["category"], seller=request.user)
+        a = Auction(title=request.POST["title"], description=request.POST["description"], starting_price=request.POST["price"], image=request.POST["image"], category=request.POST["category"].lower(), seller=request.user)
         a.save()
+        return HttpResponseRedirect(reverse("index"))
+    else:
         return render(request, "auctions/create_listing.html")
-    return render(request, "auctions/create_listing.html")
+
+def listing(request, listing):
+    auction = Auction.objects.get(title=listing)
+    return render(request, "auctions/listing.html", {
+        "auction": auction,
+    })

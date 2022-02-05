@@ -1,16 +1,18 @@
 {% extends "auctions/layout.html" %}
-{% load tz %}
 
 {% block body %}
     <h2>Active Listings</h2>
     {% for auction in auctions %}
         <div class="auction">
-            <div><img src="{{ auction.image }}" alt="{{ auction.title }}" width="auto" height="300"></div>
-            <div>
-                <h5>{{ auction.title }}</h5>
-                <p>Price {{ auction.starting_price }}</p>
+            <div class="auction_image">{% if auction.image != "" %}<img src="{{ auction.image }}" alt="{{ auction.title }}" width="400" height="auto">{% else %}No Image{% endif %}</div>
+            <div class="auction_details">
+                <h5><a href="{% url 'listing' auction.title %}">{{ auction.title }}</a></h5>
+                Price: ${{ auction.starting_price }}
                 <p>{{ auction.description }}</p>
-                <p>Created on {% localtime on %}{{ auction.created }}{% endlocaltime %}</p>
+                {% if auction.category != "" %}
+                Category: {{ auction.category }}
+                {% endif %}
+                <span>Created on {{ auction.created }}</span>
             </div>
         </div>
     {% endfor %}

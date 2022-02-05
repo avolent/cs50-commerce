@@ -10,5 +10,13 @@ form input, textarea {
 }
 
 .auction {
-    display: flex
+    display: flex;
+    padding-bottom: 10px;
+}
+.auction_image {
+    display: inherit;
+    width: 400px;
+    margin-right: 25px;
+    justify-content: center;
+    align-items: center;
 }
