@@ -88,17 +88,28 @@ def listing(request, listing):
         "auction": auction,
     })
 
+# Route for categories lists
 def categories(request):
     auctions = Auction.objects.all()
     categories = []
     for auction in auctions:
         if auction.category.capitalize() not in categories:
-            categories.append(auction.category.capitalize())
+            if auction.category is "":
+                categories.append('None')
+            else:
+                categories.append(auction.category.capitalize())
+    print(categories)
     return render(request, "auctions/categories.html", {
         "categories": categories,
     })
 
+# Route for category listing pages
 def category(request, category):
+    if category == "None":
+        auctions = Auction.objects.filter(category="")
+    else:
+        auctions = Auction.objects.filter(category=category)
     return render(request, "auctions/category.html", {
         "category": category.capitalize(),
+        "auctions": auctions
     })

@@ -1,7 +1,40 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-<h2>{{ category }}</h2>
-
-</ul>
+<h2>Listings for {{ category }}</h2>
+{% for auction in auctions %}
+<div class="auction_listing">
+    <div class="listing_image">
+        {% if auction.image != "" %}
+        <img src="{{ auction.image }}" alt="{{ auction.title }}">
+        {% else %}
+        <span class="no_image">No Image</span>
+        {% endif %}
+    </div>
+    <div class="listing_details">
+        <div class="listing_title">
+            <h4><a href="{% url 'listing' auction.title %}">{{ auction.title }}</a></h3>
+        </div>
+        <div class="listing_seller">
+            <b>Seller:</b> {{ auction.seller.username }}
+        </div>
+        <div class="listing_category">
+            {% if auction.category != "" %}
+            <b>Category:</b> {{ auction.category }}
+            {% else %}
+                <b>Category:</b> none
+            {% endif %}
+        </div>
+        <div class="listing_price">
+            <b>Current Price:</b> ${{ auction.starting_price }}
+        </div>
+        <div class="listing_description">
+            {{ auction.description }}
+        </div>
+        <div class="listing_date">
+            <span>Created on {{ auction.created }}</span>
+        </div>
+    </div>
+</div>
+{% endfor %}
 {% endblock %}

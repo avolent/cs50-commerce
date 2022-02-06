@@ -1,6 +1,9 @@
 body {
     padding: 10px;
 }
+h2 {
+    margin-bottom: 20px;
+}
 #create {
     margin-top: 5px;
 }

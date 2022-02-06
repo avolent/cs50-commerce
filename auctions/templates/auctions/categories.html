@@ -4,7 +4,7 @@
 <h2>Auction Categories</h2>
 <ul class="categories">
 {% for category in categories %}
-    <li><a href="">{{ category }}</a></li>
-{% endfor %}
+    <li><a href="{% url 'category' category %}">{{ category }}</a></li>
+{% endfor %} 
 </ul>
 {% endblock %}
