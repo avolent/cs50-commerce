@@ -1,5 +1,11 @@
 {% extends "auctions/layout.html" %}
 
+{% block alert %}
+<div class="alert">
+    {{ alert }}
+</div>
+{% endblock %}
+
 {% block body %}
     <h2>Listing: {{ auction.title }}</h2>
     <div class="auction">
@@ -11,20 +17,34 @@
             {% endif %}
         </div>
         {% if user.is_authenticated %}
-        <div class="listing_watchlist">
-        <button id="watchlist" type="submit" formaction="" >Watchlist</button>
+        <div class="listing_buttons">
+        <form action="{% url 'listing' auction.title %}" method="POST">
+            {% csrf_token %}
+            <button name="action" id="watchlist" type="submit" value="watchlist">Watchlist</button>
+            {% if user.username == auction.seller.username %}
+            <button name="action" id="close" type="submit" value="close">Close</button>
+            {% endif %}
+        </form>
         </div>
         {% endif %}
         <div class="listing_details">
+            <div class="listing_status">
+                <b>Status:</b> {{ auction.status}}
+            </div>
             <div class="listing_price">
-                <b>Current Price:</b> ${{ auction.starting_price }}
+                <b>Current Price:</b> ${{ auction.price }}
             </div>
             <div class="listing_bid">
-                Total bids: (Your bid is the)
                 {% if user.is_authenticated %}
-                <form class="bid_form">
-                    <input id="starting_price" type="number" placeholder="{{ auction.starting_price }}" required name="price" min="{{ auction.starting_price }}" step="0.01" title="Currency">
-                    <button>Bid</button>
+                <form class="bid_form" action="{% url 'listing' auction.title %}" method="POST">
+                    {% if auction.status == "Closed" %}
+                    <input disabled id="starting_price" type="number" placeholder="{{ auction.starting_price }}" required name="price" min="{{ auction.starting_price }}" step="0.01" title="Currency">
+                    <button disabled >Bid</button>
+                    {% else %}
+                    {% csrf_token %}
+                    <input id="price" name="bid" type="number" placeholder="{{ auction.price }}" required min="{{ auction.price }}" step="0.01" title="Currency">
+                    <button name="action" id="bid" type="submit" value="bid">Bid</button>
+                    {% endif %}
                 </form>
                 {% endif %}
             </div>
@@ -45,5 +65,28 @@
                 <span>Created on {{ auction.created }}</span>
             </div>
         </div>
+        <h4>Comments</h4>
+        <div class="listing_comments">
+            {% if user.is_authenticated %}
+            <div class="comment_form">
+                <form action="{% url 'listing' auction.title %}" method="POST">
+                    {% csrf_token %}
+                    <textarea id="comment" name="comment" type="text" title="Comment" required></textarea>
+                    <button name="action" id="comment" type="submit" value="comment">Comment</button>
+                </form>
+            </div>
+            {% endif %}
+            {% for comment in comments %}
+            <div class="comment">
+                <div class="comment_details">
+                    {{comment.user.username}} | {{comment.time}}
+                </div>
+                <div class="comment_text">
+                    {{comment.comment}}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
     </div>
+    
 {% endblock %}

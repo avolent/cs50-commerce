@@ -4,12 +4,20 @@ body {
 h2 {
     margin-bottom: 20px;
 }
-#create {
-    margin-top: 5px;
+button {
+    margin: 5px;
 }
-#create_listing input, textarea {
+
+#create_listing {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+#create_listing input, #create_listing textarea {
     width: 500px;
 }
+
 .auction_listing {
     display: flex;
     margin-bottom: 20px;
@@ -60,12 +68,41 @@ h2 {
     justify-content: center;
     align-items: center;
 }
-.auction .listing_price {
+.auction .listing_price, .listing_category, .listing_description, .listing_details {
     margin-bottom: 10px;
 }
-.auction .listing_category {
+
+.alert {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: red;
+    font-size: 25px;
+    margin: 0;
+    padding: 0;
+}
+
+.listing_comments {
+    display: inherit;
+    flex-direction: column;
+}
+.comment_form form{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.comment_form textarea{
+    width: 500px;
+}
+
+.comment {
+    display: inherit;
+    flex-direction: column;
     margin-bottom: 10px;
 }
-.auction .listing_description {
-    margin-bottom: 10px;
+
+.comment_details {
+    font-size: 12px;
+    color: grey;
 }

@@ -25,8 +25,11 @@
                         <b>Category:</b> none
                     {% endif %}
                 </div>
+                <div class="listing_status">
+                    <b>Status:</b> {{ auction.status }}
+                </div>
                 <div class="listing_price">
-                    <b>Current Price:</b> ${{ auction.starting_price }}
+                    <b>Current Price:</b> ${{ auction.price }}
                 </div>
                 <div class="listing_description">
                     {{ auction.description }}

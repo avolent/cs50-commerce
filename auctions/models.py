@@ -11,20 +11,32 @@ class User(AbstractUser):
 class Auction(models.Model):
     title = models.CharField(max_length=64)
     description = models.TextField()
-    starting_price = models.FloatField()
+    price = models.FloatField()
     image = models.TextField(blank=True)
     category = models.CharField(max_length=64, blank=True)
     created = models.DateTimeField(auto_now_add=True)
     seller = models.ForeignKey(User, on_delete=models.CASCADE, related_name="sales")
+    status = models.CharField(max_length=7, default="Open")
     def __str__(self):
-        return f"{self.id}: {self.title}, Starting price: {self.starting_price}, Category: {self.category}, Seller:  {self.seller}"
+        return f"{self.id}: {self.title}, Price: ${self.price}, Category: {self.category}, Seller:  {self.seller}, Status: {self.status}"
 
 class Bid(models.Model):
     auction = models.ForeignKey(Auction, on_delete=models.CASCADE, related_name="bids")
     bidder = models.ForeignKey(User, on_delete=models.CASCADE, related_name="biddings")
     bid = models.FloatField()
     time = models.DateTimeField(auto_now_add=True)
+    def __str__(self):
+        return f"{self.id}: {self.auction.title}, Bid Amount: ${self.bid}, Bidder: {self.bidder.username}"
 
 class Watchlist(models.Model):
-    auction = models.ForeignKey(Auction, on_delete=models.CASCADE, related_name="watchlisted")
+    auction = models.ForeignKey(Auction, on_delete=models.CASCADE, related_name="followers")
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="watchlist")
+
+class Comment(models.Model):
+    auction = models.ForeignKey(Auction, on_delete=models.CASCADE, related_name="comments")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="usercomments")
+    comment = models.CharField(max_length=200, blank=True)
+    time = models.DateTimeField(auto_now_add=True)
+    def __str__(self):
+        return f"{self.user.username}, {self.time} Commented: {self.comment}"
+    
