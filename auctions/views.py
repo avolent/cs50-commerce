@@ -104,10 +104,9 @@ def listing(request, listing):
     auction = Auction.objects.get(title=listing)
     comments = Comment.objects.filter(auction=auction)
     try:
-         watchlist = Watchlist.objects.filter(user=request.user, auction=auction)
+        watchlist = Watchlist.objects.filter(user=request.user, auction=auction)
     except:
         watchlist = "Empty"
-        return
     # Post requests start here
     if request.method == "POST":
         print(request.POST["action"])
@@ -144,20 +143,20 @@ def listing(request, listing):
             comment = Comment(auction=auction, user=request.user, comment=request.POST["comment"])
             comment.save()
             return HttpResponseRedirect(reverse("listing", args=[listing]))
-        return HttpResponseRedirect(reverse("listing", args=[listing]))
-        
+        return HttpResponseRedirect(reverse("listing", args=[listing]))   
     # Else get request start here and render listing page with all auction details.     
     else:
         # if the auction is closed and you are the highest bidder, Alert that you won!
         if auction.status == "Closed":
+            print("1")
             try:
                 highestBid = Bid.objects.get(auction=auction, bid=auction.price)
                 if highestBid.bidder == request.user:
                     return render(request, "auctions/listing.html", {
-                    "auction": auction,
-                    "comments": comments,
-                    "watchlist": watchlist,
-                    "alert": "Auction Closed. You won!"
+                        "auction": auction,
+                        "comments": comments,
+                        "watchlist": watchlist,
+                        "alert": "Auction Closed. You won!"
                     })
             except ObjectDoesNotExist:
                     return render(request, "auctions/listing.html", {
@@ -165,6 +164,7 @@ def listing(request, listing):
                         "comments": comments,
                         "watchlist": watchlist,
                     })
+            print("why")
         return render(request, "auctions/listing.html", {
             "comments": comments,
             "auction": auction,
