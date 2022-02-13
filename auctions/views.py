@@ -1,6 +1,7 @@
 from cgitb import reset
 from optparse import TitledHelpFormatter
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.decorators import login_required
 from django.db import IntegrityError
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
@@ -11,11 +12,11 @@ from django.core.exceptions import ObjectDoesNotExist
 from .models import User, Auction, Watchlist, Bid, Comment
 
 class CreateListing(forms.Form):
-    title = forms.CharField(label="Title", max_length=64)
-    description = forms.CharField(label="Title",)
-    category = forms.CharField(label="Category", max_length=64 )
-    Price = forms.CharField(label="Price")
-    url = forms.CharField(label="Image URL:")
+    title = forms.CharField(label="Title ", max_length=100)
+    description = forms.CharField(label="Description ", widget=forms.Textarea)
+    category = forms.CharField(label="Category (Optional)", required=False, max_length=64 )
+    price = forms.FloatField(label="Price ($)")
+    image = forms.CharField(label="Image URL (Optional)", required=False)
 
 def index(request):
     auctions = Auction.objects.all()
@@ -75,22 +76,38 @@ def register(request):
         return render(request, "auctions/register.html")
 
 # Route for creating listings
+@login_required
 def create(request):
     # Post request to create a listing on the page. Eventually should add Django forms.
     if request.method == "POST":
-        print(request.user.id)
-        a = Auction(title=request.POST["title"], description=request.POST["description"], starting_price=request.POST["price"], image=request.POST["image"], category=request.POST["category"].lower().capitalize(), seller=request.user)
-        a.save()
-        return HttpResponseRedirect(reverse("index"))
+        form = CreateListing(request.POST)
+        if form.is_valid():
+            title = form.cleaned_data["title"]
+            description = form.cleaned_data["description"]
+            price = form.cleaned_data["price"]
+            image = form.cleaned_data["image"]
+            category = form.cleaned_data["category"]
+
+            a = Auction(title=title, description=description, price=price, image=image, category=category.lower().capitalize(), seller=request.user)
+            a.save()
+            return HttpResponseRedirect(reverse("index"))
     # If a get request just render page template
     else:
-        return render(request, "auctions/create_listing.html")
+        form = CreateListing()
+        return render(request, "auctions/create_listing.html", {
+            "form": form,
+        })
 
 # Route for showing listings
 def listing(request, listing):
     # Grab the current listing from auction database
     auction = Auction.objects.get(title=listing)
     comments = Comment.objects.filter(auction=auction)
+    try:
+         watchlist = Watchlist.objects.filter(user=request.user, auction=auction)
+    except:
+        watchlist = "Empty"
+        return
     # Post requests start here
     if request.method == "POST":
         print(request.POST["action"])
@@ -101,9 +118,15 @@ def listing(request, listing):
             return HttpResponseRedirect(reverse("listing", args=[listing]))
         # Add auction to users watchlist.
         elif request.POST["action"] == "watchlist":
-            watchlist = Watchlist(auction=auction, user=request.user)
-            watchlist.save()
-            return HttpResponseRedirect(reverse("listing", args=[listing]))  
+            # Watchlist is empty
+            if not watchlist:
+                watchlist = Watchlist(auction=auction, user=request.user)
+                watchlist.save()
+                return HttpResponseRedirect(reverse("listing", args=[listing])) 
+            # Entry already in watchlist
+            watchlist.delete()
+            return HttpResponseRedirect(reverse("listing", args=[listing]))     
+        # Bid on the auction
         elif request.POST["action"] == "bid":
             if float(request.POST["bid"]) >= auction.price:
                 bid = Bid(auction=auction, bidder=request.user, bid=request.POST["bid"])
@@ -116,6 +139,7 @@ def listing(request, listing):
             "auction": auction,
             "alert": "Error: Bid price is lower then asking price, try again!",
             })
+        # Comment on the auction.    
         elif request.POST["action"] == "comment":
             comment = Comment(auction=auction, user=request.user, comment=request.POST["comment"])
             comment.save()
@@ -132,16 +156,19 @@ def listing(request, listing):
                     return render(request, "auctions/listing.html", {
                     "auction": auction,
                     "comments": comments,
+                    "watchlist": watchlist,
                     "alert": "Auction Closed. You won!"
                     })
             except ObjectDoesNotExist:
                     return render(request, "auctions/listing.html", {
                         "auction": auction,
                         "comments": comments,
+                        "watchlist": watchlist,
                     })
         return render(request, "auctions/listing.html", {
             "comments": comments,
             "auction": auction,
+            "watchlist": watchlist,
         })
 
 # Route for categories lists
@@ -168,4 +195,12 @@ def category(request, category):
     return render(request, "auctions/category.html", {
         "category": category.capitalize(),
         "auctions": auctions
+    })
+
+@login_required
+def watchlist(request):
+    watchlist = Watchlist.objects.filter(user=request.user)
+    print(watchlist)
+    return render(request, "auctions/watchlist.html", {
+        "watchlist": watchlist,
     })

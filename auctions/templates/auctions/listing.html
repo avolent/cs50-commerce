@@ -20,7 +20,11 @@
         <div class="listing_buttons">
         <form action="{% url 'listing' auction.title %}" method="POST">
             {% csrf_token %}
+            {% if not watchlist %}
             <button name="action" id="watchlist" type="submit" value="watchlist">Watchlist</button>
+            {% else %}
+            <button name="action" id="watchlist" type="submit" value="watchlist">Remove from Watchlist</button>
+            {% endif %}
             {% if user.username == auction.seller.username %}
             <button name="action" id="close" type="submit" value="close">Close</button>
             {% endif %}

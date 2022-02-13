@@ -1,8 +1,6 @@
-from datetime import datetime
 from tkinter import CASCADE
 from django.contrib.auth.models import AbstractUser
 from django.db import models
-import datetime
 
 class User(AbstractUser):
     def __str__(self):
@@ -31,6 +29,8 @@ class Bid(models.Model):
 class Watchlist(models.Model):
     auction = models.ForeignKey(Auction, on_delete=models.CASCADE, related_name="followers")
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="watchlist")
+    def __str__(self):
+        return f"User {self.user.username} has watchlisted {self.auction.title}"
 
 class Comment(models.Model):
     auction = models.ForeignKey(Auction, on_delete=models.CASCADE, related_name="comments")

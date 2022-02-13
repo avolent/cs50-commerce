@@ -1,0 +1,14 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+<h2>Watchlist</h2>
+{% if user.is_authenticated %}
+<ul class="watchlist">
+{% for item in watchlist %}
+    <li><a href="{% url 'listing' item.auction.title %}">{{ item.auction.title }}</a></li>
+{% endfor %} 
+</ul>
+{% else %}
+    Please log in to use a watchlist
+{% endif %}
+{% endblock %}

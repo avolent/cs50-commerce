@@ -8,14 +8,24 @@ button {
     margin: 5px;
 }
 
-#create_listing {
+#create_div {
     display: flex;
-    justify-content: center;
     align-items: center;
     flex-direction: column;
 }
-#create_listing input, #create_listing textarea {
+#create_listing {
+    display: inherit;
+    justify-content: center;
+    align-items: left;
+    flex-direction: inherit;
+}
+
+#create_listing label {
+    font-weight: 500;
+}
+#create_listing input, #create_listing textarea, #create_listing{
     width: 500px;
+    margin-bottom: 0.5rem;
 }
 
 .auction_listing {
